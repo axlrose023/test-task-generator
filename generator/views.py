@@ -74,28 +74,31 @@ def edit_scheme(request, pk):
         form.save()
         messages.success(request, 'Form saved successfully!')
         return redirect('data_schemas')
-
     if request.method == 'POST':
         rows = request.POST.get('rows')
-        for column in columns:
-            data_type = column.data_type
-            from_int = column.range_min
-            to_int = column.range_max
-            column_name = column.name
-            order = column.order
-            fake = fake_data(data_type, from_int, to_int)
-            data = {'schema': scheme.title, 'column_name': column_name, 'data_type': data_type, 'fake_data': fake,
-                    'order': order}
-            data_names = ("schema", "column_name", "data_type", "fake_data", "order")
-            user_data = [data['schema'], data['column_name'], data['data_type'], data['fake_data'], data['order']]
-            with open(f'media/{scheme.title}.csv', 'a') as file:
-                writer = csv.writer(file, delimiter=scheme.column_separator, quotechar=scheme.string_character)
-                for i in range(int(rows)):
-                    if file.tell() == 0:
-                        writer.writerow(data_names)
-                    writer.writerow(user_data)
-                    i += 1
-
+        data_types = []
+        fake_types = []
+        for i in range(int(rows)):
+            f_data = []
+            for column in columns:
+                i += 1
+                data_type = column.data_type
+                if data_type not in data_types:
+                    data_types.append(data_type)
+                from_int = column.range_min
+                to_int = column.range_max
+                fake = fake_data(data_type)
+                if fake is not None and fake != "":
+                    f_data.append(fake)
+                column_name = column.name
+                order = column.order
+            fake_types.append(f_data)
+        print(data_types)
+        print(fake_types)
+        with open(f'media/{scheme.title}.csv', 'a', newline='') as file:
+            writer = csv.writer(file, delimiter=scheme.column_separator, quotechar=scheme.string_character)
+            writer.writerow(data_types)
+            writer.writerows(fake_types)
     file_path = os.path.join(settings.MEDIA_ROOT, f'{scheme.title}.csv')
     if os.path.exists(file_path):
         status = 'Active'

@@ -1,7 +1,7 @@
 from faker import Faker
 
 
-def fake_data(data_type, from_int, to_int):
+def fake_data(data_type, from_int=None, to_int=None):
     fake = Faker()
     if data_type == "Name":
         fake_data = fake.name()

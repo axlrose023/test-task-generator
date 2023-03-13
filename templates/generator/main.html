@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}
+    main
+{% endblock %}
+{% block content %}
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-4 fs-4">Data Schemas</div>
+            <div class="col-8 text-end"><a class="btn btn-success" href="{% url 'add_schema' %}">New Schema</a></div>
+        </div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">Modified</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for schema in schemas %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ schema.title }}</td>
+                    {% if not schema.modified_at %}
+                        <td>{{ schema.created_at }}</td>
+                    {% else %}
+                        <td>{{ schema.modified_at }}</td>
+                    {% endif %}
+                    <td>
+                        <a style="text-decoration: none;" href="{% url 'edit_scheme' pk=schema.pk %}">Edit scheme</a>&nbsp;
+                        <a style="text-decoration: none;" class="text-danger"
+                           href="{% url 'delete_scheme' pk=schema.pk %}">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

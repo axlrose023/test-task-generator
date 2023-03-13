@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Add schema
+{% endblock %}
+{% block content %}
+    <div class="container my-5">
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-4"><h3>New Schema</h3><small>Please, enter new schema firstly</small>
+                    <h5 id="findh" class="text-success text-center"></h5>
+                </div>
+                <div class="col-8 text-start">
+                    <a href="{% url 'new_schem' %}" class="btn btn-primary" id="add_schema" type="submit">Add</a>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-4 form-group">
+                    <p class="form-label">Name</p>
+                    <input type="text" id="schema_name" name="schema_name" class="form-control">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-4">
+                    <p class="form-label">Column Separator</p>
+                    <select class="form-control" name="column_separator" id="column_separator">
+                        <option value=",">Comma (,)</option>
+                        <option value=";">Semicolon (;)</option>
+                        <option value=" ">Tab ( )</option>
+                        <option value="|">Pipe (|)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-4">
+                    <p class="form-label">String Character</p>
+                    <select class="form-control" name="string_character" id="string_character">
+                        <option value='"'>Double ""</option>
+                        <option value="'">Single ''</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+        <div class="row mt-4">
+            <div class="col-4"><h3>Schema Columns</h3></div>
+        </div>
+        <div id="result_container">
+        </div>
+        <div class="border p-3">
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-3">
+                        <p class="form-label">Column name</p>
+                        <input type="text" name="column_name" id="column_name" class="form-control">
+
+                    </div>
+                    <div class="col-2">
+                        <p class="form-label">Type</p>
+                        <select class="form-control" name="data_type" id="data_type">
+                            <option value="Name" selected>Name</option>
+                            <option value="Job">Job</option>
+                            <option value="Email">Email</option>
+                            <option value="Domain">Domain Name</option>
+                            <option value="Phone">Phone Number</option>
+                            <option value="Text">Text</option>
+                            <option value="Integer">Integer</option>
+                        </select>
+                    </div>
+                    <div class="col-3" id="input_fields">
+                    </div>
+                    <div class="col-3">
+                        <p class="form-label">Order</p>
+                        <input type="number" id="order" class="form-control" placeholder="Enter order number">
+
+                    </div>
+                </div>
+                <a data-url="{% url 'add_schema' %}" id="add_ajax" class="btn btn-primary mt-2"
+                   href="{% url 'add_schema' %}">Add
+                    column
+                </a>
+            </form>
+        </div>
+
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#add_ajax').on('click', function (e) {
+                e.preventDefault();
+                var url = $(this).attr('data_url');
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        column_name: $('#column_name').val(),
+                        data_type: $('#data_type').val(),
+                        order: $('#order').val(),
+                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    success: function (data) {
+
+                        var newHtml = '<div class="row">' +
+                            '<div class="col-3">' +
+                            '<label for="">Column name</label>' +
+                            '<p id="colname">' + data.column_name + '</p>' +
+                            '</div>' +
+                            '<div class="col-2">' +
+                            '<label for="">Type</label>' +
+                            '<p id="typed">' + data.data_type + '</p>' +
+                            '</div>' +
+                            '<div class="col-2">' +
+                            '<label for=""></label>' +
+                            '<p class=""></p>' +
+                            '</div>' +
+                            '<div class="col-1">' +
+                            '<label for="">Order</label>' +
+                            '<p id="ordered">' + data.order + '</p>' +
+                            '</div>' +
+                            '</div>';
+                        $('#result_container').append(newHtml);
+                    }
+                })
+            });
+
+            $('#add_schema').on('click', function (e) {
+                e.preventDefault();
+                var url = '{% url "new_schem" %}'
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        schema_name: $('#schema_name').val(),
+                        column_separator: $('#column_separator').val(),
+                        string_character: $('#string_character').val(),
+                        input1: $('#input1').val(),
+                        input2: $('#input2').val(),
+                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        $('#findh').html(data);
+                    }
+
+
+                })
+            });
+            $('#data_type').change(function () {
+                var selectedOption = $(this).children("option:selected").val();
+                if (selectedOption == 'Integer') {
+                    $('#input_fields').html('<input class="form-control mb-2" type="text" name="input1" id="input1" placeholder="from"><input class="form-control" type="text" id="input2" name="input2" placeholder="to">')
+                } else {
+                    $('#input_fields').html('');
+                }
+            });
+        });
+    </script>
+
+{% endblock %}

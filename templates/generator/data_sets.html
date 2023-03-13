@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}
+    Data Sets
+{% endblock %}
+{% block content %}
+
+    <div class="container my-5 shadow">
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="row m-3">
+                <div class="col-4">
+                    <label for="" class="fs-4">Title</label>
+                    {{ form.title }}
+                </div>
+                <div class="col-4">
+                    <label for="" class="fs-4">Column Separator</label>
+                    <select class="form-control" name="column_separator" id="column_separator">
+                        <option value=",">Comma (,)</option>
+                        <option value=";">Semicolon (;)</option>
+                        <option value=" ">Tab ( )</option>
+                        <option value="|">Pipe (|)</option>
+                    </select>
+                </div>
+                <div class="col-4">
+                    <label for="" class="fs-4">String Character</label>
+                    <select class="form-control" name="string_character" id="string_character">
+                        <option value='""'>Double ""</option>
+                        <option value="''">Single ''</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success mb-3 ms-4">Edit Scheme</button>
+
+        </form>
+    </div>
+{% endblock %}
